@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AgroShop.Application/AgroShop.Application.csproj" />
+    <Project Path="src/AgroShop.Domain/AgroShop.Domain.csproj" />
+  </Folder>
+</Solution>
