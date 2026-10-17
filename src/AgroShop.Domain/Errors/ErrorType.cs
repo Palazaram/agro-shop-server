@@ -2,7 +2,7 @@
 
 public enum ErrorType 
 {
-    Validation,     // 400
+    Validation,     // 422
     Unauthorized,   // 401
     Forbidden,      // 403
     NotFound,       // 404

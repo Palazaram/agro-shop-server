@@ -4,5 +4,5 @@ namespace AgroShop.Application.Abstractions;
 
 public interface IPasswordHasher
 {
-    PasswordHash Hash(string password);
+    PasswordHash Hash(Password password);
 }

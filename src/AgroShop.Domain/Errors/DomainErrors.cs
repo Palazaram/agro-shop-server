@@ -46,6 +46,29 @@ public static class DomainErrors
         public static Error PhoneUnknownOperatorCode()
             => Error.Validation("user.phone.unknown_operator_code",
                 "Phone number does not start with a known Ukrainian mobile code");
+
+        public static Error PasswordIsRequired()
+            => Error.Validation("user.password.required", "Password is required");
+
+        public static Error PasswordTooShort(int minLength)
+            => Error.Validation("user.password.min_length",
+                $"Password must be at least {minLength} characters long");
+
+        public static Error PasswordTooLong(int maxLength)
+            => Error.Validation("user.password.max_length",
+                $"Password must not exceed {maxLength} characters");
+
+        public static Error PasswordHasUnsupportedCharacters()
+            => Error.Validation("user.password.unsupported_characters",
+                "Password may contain only Latin letters, digits and punctuation, without spaces");
+
+        public static Error EmailAlreadyExists()
+            => Error.Conflict("user.email.already_exists",
+                "User with this email address already exists");
+
+        public static Error PhoneAlreadyExists()
+            => Error.Conflict("user.phone.already_exists",
+                "User with this phone number already exists");
     }
 
     public static class RefreshTokens 
