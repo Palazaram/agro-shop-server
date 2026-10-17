@@ -2,5 +2,6 @@
   <Folder Name="/src/">
     <Project Path="src/AgroShop.Application/AgroShop.Application.csproj" />
     <Project Path="src/AgroShop.Domain/AgroShop.Domain.csproj" />
+    <Project Path="src/AgroShop.Infrastructure/AgroShop.Infrastructure.csproj" />
   </Folder>
 </Solution>
