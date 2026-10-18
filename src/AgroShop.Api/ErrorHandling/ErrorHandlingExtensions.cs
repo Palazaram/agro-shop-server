@@ -18,7 +18,10 @@ internal static class ErrorHandlingExtensions
                 context.ProblemDetails.Extensions["timestamp"] = timeProvider.GetUtcNow();
             });
 
+        services.Configure<RouteHandlerOptions>(options => options.ThrowOnBadRequest = true);
+
         services.AddExceptionHandler<DuplicateKeyExceptionHandler>();
+        services.AddExceptionHandler<BadRequestExceptionHandler>();
         services.AddExceptionHandler<GlobalExceptionHandler>();
 
         return services;
