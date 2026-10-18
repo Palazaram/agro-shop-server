@@ -1,6 +1,5 @@
 ﻿using AgroShop.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 
 namespace AgroShop.Api.ErrorHandling;
 
@@ -18,16 +17,10 @@ internal sealed class DuplicateKeyExceptionHandler(
 
         logger.LogWarning("Unique constraint {Constraint} was violated", duplicateKey.ConstraintName);
 
-        var problemDetails = new ProblemDetails
-        {
-            Status = StatusCodes.Status409Conflict,
-            Title = "Conflict"
-        };
-
-        problemDetails.Extensions["errors"] = new[]
-        {
-            new ApiError(null, "resource.duplicate", "A record with the same unique value already exists.")
-        };
+        var problemDetails = ApiProblemDetails.Create(
+            StatusCodes.Status409Conflict,
+            "Conflict",
+            new ApiError(null, "resource.duplicate", "A record with the same unique value already exists."));
 
         httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
 

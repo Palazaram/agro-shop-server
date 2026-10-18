@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 
 namespace AgroShop.Api.ErrorHandling;
 
@@ -27,17 +26,12 @@ internal sealed class GlobalExceptionHandler(
         logger.LogError(exception, "Unhandled exception while processing {Method} {Path}",
             httpContext.Request.Method, httpContext.Request.Path);
 
-        var problemDetails = new ProblemDetails
-        {
-            Status = StatusCodes.Status500InternalServerError,
-            Title = "Server error",
-            Detail = environment.IsDevelopment() ? exception.Message : null
-        };
+        var problemDetails = ApiProblemDetails.Create(
+            StatusCodes.Status500InternalServerError,
+            "Server error",
+            new ApiError(null, "internal.server_error", "An unexpected error occurred."));
 
-        problemDetails.Extensions["errors"] = new[]
-        {
-            new ApiError(null, "internal.server_error", "An unexpected error occurred.")
-        };
+        problemDetails.Detail = environment.IsDevelopment() ? exception.Message : null;
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
