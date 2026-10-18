@@ -1,3 +1,4 @@
+using AgroShop.Api.ErrorHandling;
 using AgroShop.Application;
 using AgroShop.Infrastructure;
 using Serilog;
@@ -25,11 +26,14 @@ try
         .AddApplication()
         .AddInfrastructure(builder.Configuration);
 
+    builder.Services.AddErrorHandling();
+
     builder.Services.AddOpenApi();
 
     var app = builder.Build();
 
     app.UseSerilogRequestLogging();
+    app.UseExceptionHandler();
 
     if (app.Environment.IsDevelopment())
     {
