@@ -18,6 +18,7 @@ internal static class ErrorHandlingExtensions
                 context.ProblemDetails.Extensions["timestamp"] = timeProvider.GetUtcNow();
             });
 
+        services.AddExceptionHandler<DuplicateKeyExceptionHandler>();
         services.AddExceptionHandler<GlobalExceptionHandler>();
 
         return services;

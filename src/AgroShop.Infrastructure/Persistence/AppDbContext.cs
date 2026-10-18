@@ -2,6 +2,7 @@
 using AgroShop.Domain.RefreshTokens;
 using AgroShop.Domain.Users;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace AgroShop.Infrastructure.Persistence;
 
@@ -16,6 +17,16 @@ public sealed class AppDbContext : DbContext, IUnitOfWork
     protected override void OnModelCreating(ModelBuilder modelBuilder)
         => modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-    Task IUnitOfWork.SaveChangesAsync(CancellationToken ct)
-        => SaveChangesAsync(ct);
+    async Task IUnitOfWork.SaveChangesAsync(CancellationToken ct)
+    {
+        try
+        {
+            await SaveChangesAsync(ct);
+        }
+        catch (DbUpdateException exception)
+            when (exception.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } postgresException)
+        {
+            throw new DuplicateKeyException(postgresException.ConstraintName, exception);
+        }
+    }
 }
