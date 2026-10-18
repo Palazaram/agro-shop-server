@@ -1,3 +1,5 @@
+using AgroShop.Api.Authentication;
+using AgroShop.Api.Endpoints;
 using AgroShop.Api.ErrorHandling;
 using AgroShop.Api.OpenApi;
 using AgroShop.Application;
@@ -33,6 +35,8 @@ try
     builder.Services.AddOpenApi(options =>
         options.AddSchemaTransformer<RequiredFromValidatorSchemaTransformer>());
 
+    builder.Services.AddSingleton<AuthCookies>();
+
     var app = builder.Build();
 
     app.UseSerilogRequestLogging();
@@ -48,6 +52,8 @@ try
             .SortTagsAlphabetically()
             .SortOperationsByMethod());
     }
+
+    app.MapAuthEndpoints();
 
     app.Run();
 }
