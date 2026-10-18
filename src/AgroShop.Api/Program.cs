@@ -1,6 +1,8 @@
 using AgroShop.Api.ErrorHandling;
+using AgroShop.Api.OpenApi;
 using AgroShop.Application;
 using AgroShop.Infrastructure;
+using Scalar.AspNetCore;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -28,7 +30,8 @@ try
 
     builder.Services.AddErrorHandling();
 
-    builder.Services.AddOpenApi();
+    builder.Services.AddOpenApi(options =>
+        options.AddSchemaTransformer<RequiredFromValidatorSchemaTransformer>());
 
     var app = builder.Build();
 
@@ -38,6 +41,12 @@ try
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi();
+        app.MapScalarApiReference(options => options
+            .WithTitle("AgroShop API")
+            .WithTheme(ScalarTheme.Moon)
+            .WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.Fetch)
+            .SortTagsAlphabetically()
+            .SortOperationsByMethod());
     }
 
     app.Run();
