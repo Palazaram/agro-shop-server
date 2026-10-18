@@ -6,6 +6,7 @@ using AgroShop.Application;
 using AgroShop.Infrastructure;
 using Scalar.AspNetCore;
 using Serilog;
+using System.Text.Json.Serialization;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -33,7 +34,13 @@ try
     builder.Services.AddErrorHandling();
 
     builder.Services.AddOpenApi(options =>
-        options.AddSchemaTransformer<RequiredFromValidatorSchemaTransformer>());
+    {
+        options.AddSchemaTransformer<RequiredFromValidatorSchemaTransformer>();
+        options.AddSchemaTransformer<ProblemDetailsSchemaTransformer>();
+    });
+
+    builder.Services.ConfigureHttpJsonOptions(options =>
+        options.SerializerOptions.NumberHandling = JsonNumberHandling.Strict);
 
     builder.Services.AddSingleton<AuthCookies>();
 
