@@ -1,27 +1,49 @@
 using AgroShop.Application;
 using AgroShop.Infrastructure;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-builder.Host.UseDefaultServiceProvider(options =>
+try
 {
-    options.ValidateOnBuild = true;
-    options.ValidateScopes = true;
-});
+    var builder = WebApplication.CreateBuilder(args);
 
-builder.Services
-    .AddApplication()
-    .AddInfrastructure(builder.Configuration);
+    builder.Host.UseDefaultServiceProvider(options =>
+    {
+        options.ValidateOnBuild = true;
+        options.ValidateScopes = true;
+    });
 
-// Add services to the container.
-builder.Services.AddOpenApi();
+    builder.Services.AddSerilog((services, configuration) => configuration
+        .ReadFrom.Configuration(builder.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext());
 
-var app = builder.Build();
+    builder.Services
+        .AddApplication()
+        .AddInfrastructure(builder.Configuration);
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
+    builder.Services.AddOpenApi();
+
+    var app = builder.Build();
+
+    app.UseSerilogRequestLogging();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.MapOpenApi();
+    }
+
+    app.Run();
 }
-
-app.Run();
+catch (Exception exception) when (exception is not HostAbortedException)
+{
+    Log.Fatal(exception, "Application terminated unexpectedly");
+    Environment.ExitCode = 1;
+}
+finally
+{
+    Log.CloseAndFlush();
+}
