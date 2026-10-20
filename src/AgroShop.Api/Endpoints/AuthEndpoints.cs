@@ -4,6 +4,7 @@ using AgroShop.Api.RateLimiting;
 using AgroShop.Api.Validation;
 using AgroShop.Application.Abstractions;
 using AgroShop.Application.Users.LoginUser;
+using AgroShop.Application.Users.LogoutUser;
 using AgroShop.Application.Users.RegisterUser;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -30,6 +31,10 @@ internal static class AuthEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .RequireRateLimiting(RateLimitingExtensions.LoginPolicy);
+
+        group.MapPost("/logout", LogoutAsync)
+            .WithName("LogoutUser")
+            .WithSummary("Logout the current user");
 
         return app;
     }
@@ -64,6 +69,25 @@ internal static class AuthEndpoints
             return result.Error.ToProblem();
 
         authCookies.SetTokens(response, result.Value.AccessToken, result.Value.RefreshToken);
+
+        return TypedResults.NoContent();
+    }
+
+    private static async Task<Results<NoContent, ProblemHttpResult>> LogoutAsync(
+        HttpRequest request,
+        ICommandHandler<LogoutUserCommand> handler,
+        AuthCookies authCookies,
+        HttpResponse response,
+        CancellationToken ct)
+    {
+        var refreshToken = request.Cookies[AuthCookies.RefreshTokenName];
+        var command = new LogoutUserCommand(refreshToken);
+        var result = await handler.HandleAsync(command, ct);
+
+        if (result.IsFailure)
+            return result.Error.ToProblem();
+
+        authCookies.ClearTokens(response);
 
         return TypedResults.NoContent();
     }

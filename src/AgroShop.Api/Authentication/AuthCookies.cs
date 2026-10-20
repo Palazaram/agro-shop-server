@@ -27,7 +27,13 @@ internal sealed class AuthCookies(
             CreateOptions(RefreshTokenPath, TimeSpan.FromDays(refreshTokenOptions.Value.LifetimeDays)));
     }
 
-    private static CookieOptions CreateOptions(string path, TimeSpan maxAge) => new()
+    public void ClearTokens(HttpResponse response)
+    {
+        response.Cookies.Delete(AccessTokenName, CreateOptions(AccessTokenPath));
+        response.Cookies.Delete(RefreshTokenName, CreateOptions(RefreshTokenPath));
+    }
+
+    private static CookieOptions CreateOptions(string path, TimeSpan? maxAge = null) => new()
     {
         HttpOnly = true,
         Secure = true,

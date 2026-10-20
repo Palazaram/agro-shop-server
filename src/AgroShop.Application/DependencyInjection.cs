@@ -27,7 +27,7 @@ public static class DependencyInjection
         services.Scan(scan => scan
             .FromAssemblies(assembly)
             .AddClasses(classes => classes
-                .AssignableTo(typeof(ICommandHandler<,>))
+                .AssignableToAny(typeof(ICommandHandler<>), typeof(ICommandHandler<,>))
                 .Where(type => !type.IsGenericTypeDefinition))
             .AsImplementedInterfaces()
             .WithScopedLifetime());
