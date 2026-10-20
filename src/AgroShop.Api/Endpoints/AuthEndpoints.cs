@@ -1,5 +1,6 @@
 ﻿using AgroShop.Api.Authentication;
 using AgroShop.Api.ErrorHandling;
+using AgroShop.Api.RateLimiting;
 using AgroShop.Api.Validation;
 using AgroShop.Application.Abstractions;
 using AgroShop.Application.Users.LoginUser;
@@ -18,13 +19,17 @@ internal static class AuthEndpoints
             .WithName("RegisterUser")
             .WithSummary("Register a new customer and sign them in")
             .WithRequestValidation<RegisterUserCommand>()
-            .ProducesProblem(StatusCodes.Status409Conflict);
+            .ProducesProblem(StatusCodes.Status409Conflict)
+            .ProducesProblem(StatusCodes.Status429TooManyRequests)
+            .RequireRateLimiting(RateLimitingExtensions.RegisterPolicy);
 
         group.MapPost("/login", LoginAsync)
             .WithName("LoginUser")
             .WithSummary("Login an existing user")
             .WithRequestValidation<LoginUserCommand>()
-            .ProducesProblem(StatusCodes.Status401Unauthorized);
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status429TooManyRequests)
+            .RequireRateLimiting(RateLimitingExtensions.LoginPolicy);
 
         return app;
     }

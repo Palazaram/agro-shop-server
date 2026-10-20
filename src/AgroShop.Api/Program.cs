@@ -2,6 +2,7 @@ using AgroShop.Api.Authentication;
 using AgroShop.Api.Endpoints;
 using AgroShop.Api.ErrorHandling;
 using AgroShop.Api.OpenApi;
+using AgroShop.Api.RateLimiting;
 using AgroShop.Application;
 using AgroShop.Infrastructure;
 using Scalar.AspNetCore;
@@ -32,6 +33,8 @@ try
         .AddInfrastructure(builder.Configuration);
 
     builder.Services.AddErrorHandling();
+    
+    builder.Services.AddApiRateLimiting();
 
     builder.Services.AddOpenApi(options =>
     {
@@ -48,6 +51,7 @@ try
 
     app.UseSerilogRequestLogging();
     app.UseExceptionHandler();
+    app.UseRateLimiter();
 
     if (app.Environment.IsDevelopment())
     {
