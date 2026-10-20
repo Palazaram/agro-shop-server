@@ -36,6 +36,8 @@ try
     
     builder.Services.AddApiRateLimiting();
 
+    builder.Services.AddJwtAuthentication();
+
     builder.Services.AddOpenApi(options =>
     {
         options.AddSchemaTransformer<RequiredFromValidatorSchemaTransformer>();
@@ -43,7 +45,10 @@ try
     });
 
     builder.Services.ConfigureHttpJsonOptions(options =>
-        options.SerializerOptions.NumberHandling = JsonNumberHandling.Strict);
+    {
+        options.SerializerOptions.NumberHandling = JsonNumberHandling.Strict;
+        options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(allowIntegerValues: false));
+    });
 
     builder.Services.AddSingleton<AuthCookies>();
 
@@ -52,6 +57,8 @@ try
     app.UseSerilogRequestLogging();
     app.UseExceptionHandler();
     app.UseRateLimiter();
+    app.UseAuthentication();
+    app.UseAuthorization();
 
     if (app.Environment.IsDevelopment())
     {
@@ -65,6 +72,7 @@ try
     }
 
     app.MapAuthEndpoints();
+    app.MapUserEndpoints();
 
     app.Run();
 }

@@ -76,6 +76,9 @@ public static class DomainErrors
 
         public static Error PasswordInvalid()
             => Error.Unauthorized("user.password.invalid", "Invalid password");
+
+        public static Error NotFound()
+            => Error.NotFound("user.not_found", "User not found");
     }
 
     public static class RefreshTokens 

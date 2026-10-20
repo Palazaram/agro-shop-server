@@ -1,10 +1,12 @@
 ﻿using AgroShop.Application.Abstractions;
 using AgroShop.Application.Extensions;
+using AgroShop.Application.Users;
 using AgroShop.Domain.Abstractions;
 using AgroShop.Domain.RefreshTokens;
 using AgroShop.Domain.Users;
 using AgroShop.Infrastructure.Options;
 using AgroShop.Infrastructure.Persistence;
+using AgroShop.Infrastructure.Persistence.Queries;
 using AgroShop.Infrastructure.Persistence.Repositories;
 using AgroShop.Infrastructure.Security;
 using Microsoft.Extensions.Configuration;
@@ -41,5 +43,7 @@ public static class DependencyInjection
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
+        services.AddScoped<IUserQueries, UserQueries>();
     }
 }
