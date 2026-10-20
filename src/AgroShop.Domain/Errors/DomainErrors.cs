@@ -69,6 +69,13 @@ public static class DomainErrors
         public static Error PhoneAlreadyExists()
             => Error.Conflict("user.phone.already_exists",
                 "User with this phone number already exists");
+
+        public static Error PhoneNotRegistered()
+            => Error.Unauthorized("user.phone.not_registered",
+                "User with this phone number is not registered");
+
+        public static Error PasswordInvalid()
+            => Error.Unauthorized("user.password.invalid", "Invalid password");
     }
 
     public static class RefreshTokens 

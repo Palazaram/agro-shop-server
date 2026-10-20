@@ -25,4 +25,8 @@ public static class ValidationExtensions
             }
         });
     }
+
+    public static IRuleBuilderOptions<T, TProperty> WithError<T, TProperty>(
+        this IRuleBuilderOptions<T, TProperty> rule, Error error)
+        => rule.WithErrorCode(error.Code).WithMessage(error.Message);
 }

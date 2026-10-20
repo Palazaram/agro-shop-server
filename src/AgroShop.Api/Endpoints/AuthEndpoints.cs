@@ -2,6 +2,7 @@
 using AgroShop.Api.ErrorHandling;
 using AgroShop.Api.Validation;
 using AgroShop.Application.Abstractions;
+using AgroShop.Application.Users.LoginUser;
 using AgroShop.Application.Users.RegisterUser;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -18,6 +19,12 @@ internal static class AuthEndpoints
             .WithSummary("Register a new customer and sign them in")
             .WithRequestValidation<RegisterUserCommand>()
             .ProducesProblem(StatusCodes.Status409Conflict);
+
+        group.MapPost("/login", LoginAsync)
+            .WithName("LoginUser")
+            .WithSummary("Login an existing user")
+            .WithRequestValidation<LoginUserCommand>()
+            .ProducesProblem(StatusCodes.Status401Unauthorized);
 
         return app;
     }
@@ -37,5 +44,22 @@ internal static class AuthEndpoints
         authCookies.SetTokens(response, result.Value.AccessToken, result.Value.RefreshToken);
 
         return TypedResults.Created();
+    }
+
+    private static async Task<Results<NoContent, ProblemHttpResult>> LoginAsync(
+        LoginUserCommand command,
+        ICommandHandler<LoginUserCommand, LoginUserResponse> handler,
+        AuthCookies authCookies,
+        HttpResponse response,
+        CancellationToken ct)
+    {
+        var result = await handler.HandleAsync(command, ct);
+
+        if (result.IsFailure)
+            return result.Error.ToProblem();
+
+        authCookies.SetTokens(response, result.Value.AccessToken, result.Value.RefreshToken);
+
+        return TypedResults.NoContent();
     }
 }

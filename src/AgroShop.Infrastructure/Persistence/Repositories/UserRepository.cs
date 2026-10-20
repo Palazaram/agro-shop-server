@@ -1,4 +1,5 @@
 ﻿using AgroShop.Domain.Users;
+using CSharpFunctionalExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace AgroShop.Infrastructure.Persistence.Repositories;
@@ -10,6 +11,9 @@ internal sealed class UserRepository(AppDbContext context) : IUserRepository
 
     public Task<bool> ExistsByEmailAsync(Email email, CancellationToken ct)
         => context.Users.AnyAsync(u => u.Email == email, ct);
+
+    public async Task<Maybe<User>> GetByPhoneAsync(Phone phone, CancellationToken ct)
+        => await context.Users.FirstOrDefaultAsync(u => u.Phone == phone, ct);
 
     public void Add(User user)
         => context.Users.Add(user);
