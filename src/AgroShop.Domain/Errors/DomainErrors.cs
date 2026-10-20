@@ -87,5 +87,9 @@ public static class DomainErrors
         public static Error Invalid()
             => Error.Unauthorized("refresh_token.invalid",
                 "Refresh token is revoked or expired");
+
+        public static Error ConcurrentRotation()
+            => Error.Conflict("refresh_token.concurrent_rotation",
+                "Refresh token was already rotated by a concurrent request");
     }
 }

@@ -37,7 +37,7 @@ public sealed class RefreshToken : AggregateRoot<Guid>
         Guid userId,
         TokenHash tokenHash,
         DateTimeOffset createdAt,
-        TimeSpan lifetime) 
+        TimeSpan lifetime)
     {
         if (userId == Guid.Empty)
             throw new ArgumentException("User id must not be empty", nameof(userId));
@@ -48,7 +48,7 @@ public sealed class RefreshToken : AggregateRoot<Guid>
     public bool IsExpired(DateTimeOffset now) => ExpiresAt <= now;
     public bool IsActive(DateTimeOffset now) => !IsRevoked && !IsExpired(now);
 
-    public void Revoke(DateTimeOffset revokedAt) 
+    public void Revoke(DateTimeOffset revokedAt)
     {
         if (IsRevoked)
             return;
@@ -56,7 +56,7 @@ public sealed class RefreshToken : AggregateRoot<Guid>
         RevokedAt = revokedAt;
     }
 
-    public Result<RefreshToken, Error> Rotate(TokenHash newHash, DateTimeOffset now, TimeSpan lifetime) 
+    public Result<RefreshToken, Error> Rotate(TokenHash newHash, DateTimeOffset now, TimeSpan lifetime)
     {
         if (ReplacedByTokenId is not null)
             return DomainErrors.RefreshTokens.AlreadyReplaced();
@@ -71,6 +71,11 @@ public sealed class RefreshToken : AggregateRoot<Guid>
 
         return newToken;
     }
+
+    public bool WasReplacedWithin(TimeSpan period, DateTimeOffset now)
+        => ReplacedByTokenId is not null
+           && RevokedAt is { } replacedAt
+           && now - replacedAt < period;
 
     private static RefreshToken Issue(
         Guid userId,

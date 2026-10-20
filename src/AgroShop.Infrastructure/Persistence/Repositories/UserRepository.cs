@@ -15,6 +15,9 @@ internal sealed class UserRepository(AppDbContext context) : IUserRepository
     public async Task<Maybe<User>> GetByPhoneAsync(Phone phone, CancellationToken ct)
         => await context.Users.FirstOrDefaultAsync(u => u.Phone == phone, ct);
 
+    public async Task<Maybe<User>> GetByIdAsync(Guid id, CancellationToken ct)
+        => await context.Users.FindAsync([id], ct);
+
     public void Add(User user)
         => context.Users.Add(user);
 }

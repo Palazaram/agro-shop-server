@@ -11,4 +11,7 @@ public sealed class RefreshTokenOptions
 
     [Range(1, 365)]
     public int RetentionDaysAfterExpiry { get; init; }
+
+    [Range(0, 300)]
+    public int RotationGracePeriodSeconds { get; init; }
 }

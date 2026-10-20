@@ -5,7 +5,9 @@ using AgroShop.Api.Validation;
 using AgroShop.Application.Abstractions;
 using AgroShop.Application.Users.LoginUser;
 using AgroShop.Application.Users.LogoutUser;
+using AgroShop.Application.Users.RefreshSession;
 using AgroShop.Application.Users.RegisterUser;
+using AgroShop.Domain.Errors;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace AgroShop.Api.Endpoints;
@@ -35,6 +37,12 @@ internal static class AuthEndpoints
         group.MapPost("/logout", LogoutAsync)
             .WithName("LogoutUser")
             .WithSummary("Logout the current user");
+
+        group.MapPost("/refresh", RefreshAsync)
+            .WithName("RefreshSession")
+            .WithSummary("Rotate the refresh token and issue a new access token")
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status409Conflict);
 
         return app;
     }
@@ -88,6 +96,29 @@ internal static class AuthEndpoints
             return result.Error.ToProblem();
 
         authCookies.ClearTokens(response);
+
+        return TypedResults.NoContent();
+    }
+
+    private static async Task<Results<NoContent, ProblemHttpResult>> RefreshAsync(
+        HttpRequest request,
+        ICommandHandler<RefreshSessionCommand, RefreshSessionResponse> handler,
+        AuthCookies authCookies,
+        HttpResponse response,
+        CancellationToken ct)
+    {
+        var command = new RefreshSessionCommand(request.Cookies[AuthCookies.RefreshTokenName]);
+        var result = await handler.HandleAsync(command, ct);
+
+        if (result.IsFailure)
+        {
+            if (result.Error.ErrorType == ErrorType.Unauthorized)
+                authCookies.ClearTokens(response);
+
+            return result.Error.ToProblem();
+        }
+
+        authCookies.SetTokens(response, result.Value.AccessToken, result.Value.RefreshToken);
 
         return TypedResults.NoContent();
     }
