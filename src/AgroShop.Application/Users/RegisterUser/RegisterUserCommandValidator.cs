@@ -1,4 +1,5 @@
 ﻿using AgroShop.Application.Extensions;
+using AgroShop.Domain.Errors;
 using AgroShop.Domain.Users;
 using FluentValidation;
 
@@ -17,5 +18,6 @@ public sealed class RegisterUserCommandValidator : AbstractValidator<RegisterUse
         RuleFor(x => x.Email).MustBeValueObject(Email.Create);
         RuleFor(x => x.Phone).MustBeValueObject(Phone.Create);
         RuleFor(x => x.Password).MustBeValueObject(Password.Create);
+        RuleFor(x => x.AcceptTerms).Equal(true).WithError(DomainErrors.Users.TermsNotAccepted());
     }
 }

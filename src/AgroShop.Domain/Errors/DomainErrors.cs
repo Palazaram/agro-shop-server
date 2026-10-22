@@ -79,6 +79,9 @@ public static class DomainErrors
 
         public static Error NotFound()
             => Error.NotFound("user.not_found", "User not found");
+
+        public static Error TermsNotAccepted()
+            => Error.Validation("user.terms.not_accepted", "You must accept the personal data processing terms");
     }
 
     public static class RefreshTokens 

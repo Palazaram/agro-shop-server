@@ -10,6 +10,7 @@ public sealed class User : AggregateRoot<Guid>
     public PasswordHash PasswordHash { get; private set; } = default!;
     public FullName FullName { get; private set; } = default!;
     public DateTimeOffset CreatedAt { get; private set; }
+    public DateTimeOffset TermsAcceptedAt { get; private set; }
     public Role Role { get; private set; }
 
     private User() { }
@@ -30,6 +31,7 @@ public sealed class User : AggregateRoot<Guid>
         FullName = fullName;
         CreatedAt = createdAt;
         Role = role;
+        TermsAcceptedAt = createdAt;
     }
 
     public static User Create(

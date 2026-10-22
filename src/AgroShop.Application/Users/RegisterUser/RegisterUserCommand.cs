@@ -6,4 +6,5 @@ public sealed record RegisterUserCommand(
     string? Patronymic,
     string? Email,
     string? Phone,
-    string? Password);
+    string? Password,
+    bool? AcceptTerms);

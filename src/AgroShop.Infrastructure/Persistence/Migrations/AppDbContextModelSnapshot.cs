@@ -105,6 +105,10 @@ namespace AgroShop.Infrastructure.Persistence.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("role");
 
+                    b.Property<DateTimeOffset>("TermsAcceptedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("terms_accepted_at");
+
                     b.ComplexProperty(typeof(Dictionary<string, object>), "FullName", "AgroShop.Domain.Users.User.FullName#FullName", b1 =>
                         {
                             b1.IsRequired();

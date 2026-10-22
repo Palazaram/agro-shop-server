@@ -60,6 +60,9 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.CreatedAt)
             .IsRequired();
 
+        builder.Property(u => u.TermsAcceptedAt)
+            .IsRequired();
+
         builder.Property(u => u.Role)
             .IsRequired();
 
