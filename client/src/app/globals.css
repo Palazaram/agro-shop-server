@@ -1,1 +1,90 @@
 @import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-pt-serif), ui-serif, Georgia, serif;
+}
+
+@theme {
+  /* Поверхности */
+  --color-cream: #f8f4e8; /* фон страницы */
+  --color-surface: #ffffff; /* шапка, карточки, окна */
+  --color-field: #fcfaf3; /* заливка полей */
+  --color-placeholder: #eee9d5; /* заглушка картинки */
+  --color-olive-tint: #eef1e2; /* мягкое наведение, значки */
+  --color-peach: #fbe5d3; /* плашка в баннере */
+
+  /* Бренд. primary — только заливки: как текст он не проходит по контрасту.
+     Любой читаемый терракотовый (текст, ссылки, главные кнопки) — primary-ink. */
+  --color-primary: #e58b3c;
+  --color-primary-dark: #c46a1f;
+  --color-primary-ink: #a8570f;
+  --color-primary-ink-dark: #8a4709;
+  --color-primary-on-dark: #f0a765; /* терракота на тёмно-зелёном */
+  --color-olive: #6b7a3d;
+  --color-forest: #3b4226;
+  --color-brown: #7a5a3a;
+  --color-ink: #2e2a20;
+
+  /* Текст */
+  --color-body: #6a6354; /* подписи */
+  --color-muted: #726d5c; /* второстепенный */
+  --color-price-old: #b3ac98;
+  --color-on-dark: #c9c7b2;
+
+  /* Рамки и смысловые */
+  --color-border: #eae4d2;
+  --color-danger: #b3402f;
+  --color-success: #6b7a3d;
+}
+
+@layer base {
+  body {
+    @apply bg-cream font-sans text-[14px] text-ink antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-serif font-bold text-ink;
+    text-wrap: balance;
+  }
+
+  a {
+    @apply text-primary-ink transition-colors hover:text-primary-ink-dark;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary-ink;
+  }
+
+  .bg-forest :focus-visible {
+    @apply outline-white;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-text-fill-color: var(--color-ink);
+    -webkit-box-shadow: 0 0 0 1000px var(--color-field) inset;
+    caret-color: var(--color-ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto !important;
+    }
+
+    *:not(.animate-spin),
+    *:not(.animate-spin)::before,
+    *:not(.animate-spin)::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
