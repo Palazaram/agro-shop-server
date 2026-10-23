@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, PT_Serif } from "next/font/google";
 import { Providers } from "./providers";
+import { Header } from "./_components/Header";
 import "./globals.css";
 
 const inter = Inter({
@@ -15,7 +16,10 @@ const ptSerif = PT_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "Садова Країна",
+  title: {
+    default: "Садова Країна",
+    template: "%s — Садова Країна",
+  },
 };
 
 export default function RootLayout({
@@ -26,7 +30,10 @@ export default function RootLayout({
   return (
     <html lang="uk" className={`${inter.variable} ${ptSerif.variable}`}>
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Header />
+          {children}
+        </Providers>
       </body>
     </html>
   );

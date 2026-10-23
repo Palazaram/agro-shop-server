@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiError } from "@/shared/api/apiError";
-import { getCurrentUser, login } from "./api";
+import { getCurrentUser, login, logout, register } from "./api";
 import type { UserProfile } from "./types";
 
 export const currentUserQueryKey = ["auth", "current-user"] as const;
@@ -28,6 +28,27 @@ export function useLogin() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: login,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: currentUserQueryKey }),
+  });
+}
+
+export function useLogout() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      queryClient.setQueryData(currentUserQueryKey, null);
+    },
+  });
+}
+
+export function useRegister() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: register,
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: currentUserQueryKey }),
   });
