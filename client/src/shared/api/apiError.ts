@@ -13,8 +13,4 @@ export class ApiError extends Error {
     this.status = status;
     this.errors = errors;
   }
-
-  hasCode(code: string): boolean {
-    return this.errors.some((error) => error.code === code);
-  }
 }

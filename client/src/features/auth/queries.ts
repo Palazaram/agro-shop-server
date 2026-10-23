@@ -8,6 +8,7 @@ export const currentUserQueryKey = ["auth", "current-user"] as const;
 export function useCurrentUser() {
   return useQuery({
     queryKey: currentUserQueryKey,
+    retry: 1,
     queryFn: async ({ signal }): Promise<UserProfile | null> => {
       try {
         return await getCurrentUser(signal);

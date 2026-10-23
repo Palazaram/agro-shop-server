@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Form } from "@base-ui/react/form";
 import { Mail } from "lucide-react";
 import { z } from "zod";
@@ -17,7 +18,6 @@ import {
   registerSchema,
   type RegisterFormValues,
 } from "../schemas";
-import Link from "next/link";
 
 type RegisterFormProps = {
   onSuccess: () => void;
@@ -34,10 +34,12 @@ const REGISTER_FIELDS = [
   "acceptTerms",
 ] as const;
 
+type RegisterField = (typeof REGISTER_FIELDS)[number];
+
 const FIELD_BY_CODE = {
   "user.phone.already_exists": "phone",
   "user.email.already_exists": "email",
-};
+} satisfies Record<string, RegisterField>;
 
 const fields = registerFieldsSchema.shape;
 
@@ -62,7 +64,10 @@ export function RegisterForm({
   const [formError, setFormError] = useState<string | null>(null);
 
   async function handleSubmit(values: RegisterFormValues) {
-    setErrors({});
+    if (register.isPending) {
+      return;
+    }
+
     setFormError(null);
 
     const result = registerSchema.safeParse(values);
@@ -175,6 +180,7 @@ export function RegisterForm({
         variant="primary"
         className="mt-2 w-full"
         disabled={register.isPending}
+        focusableWhenDisabled
       >
         {register.isPending ? "Реєструємо…" : "Зареєструватися"}
       </Button>
@@ -184,7 +190,8 @@ export function RegisterForm({
         <button
           type="button"
           onClick={onSwitchToLogin}
-          className="cursor-pointer font-medium text-primary-ink transition-colors hover:text-primary-ink-dark hover:underline"
+          disabled={register.isPending}
+          className="cursor-pointer font-medium text-primary-ink transition-colors hover:text-primary-ink-dark hover:underline disabled:cursor-not-allowed disabled:opacity-60"
         >
           Увійти
         </button>

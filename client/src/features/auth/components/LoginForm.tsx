@@ -18,10 +18,12 @@ type LoginFormProps = {
 
 const LOGIN_FIELDS = ["phone", "password"] as const;
 
+type LoginField = (typeof LOGIN_FIELDS)[number];
+
 const FIELD_BY_CODE = {
   "user.phone.not_registered": "phone",
   "user.password.invalid": "password",
-};
+} satisfies Record<string, LoginField>;
 
 export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
   const login = useLogin();
@@ -29,7 +31,10 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
   const [formError, setFormError] = useState<string | null>(null);
 
   async function handleSubmit(values: LoginFormValues) {
-    setErrors({});
+    if (login.isPending) {
+      return;
+    }
+
     setFormError(null);
 
     const result = loginSchema.safeParse(values);
@@ -78,6 +83,7 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
         variant="primary"
         className="mt-2 w-full"
         disabled={login.isPending}
+        focusableWhenDisabled
       >
         {login.isPending ? "Входимо…" : "Увійти"}
       </Button>
@@ -87,7 +93,8 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
         <button
           type="button"
           onClick={onSwitchToRegister}
-          className="cursor-pointer font-medium text-primary-ink transition-colors hover:text-primary-ink-dark hover:underline"
+          disabled={login.isPending}
+          className="cursor-pointer font-medium text-primary-ink transition-colors hover:text-primary-ink-dark hover:underline disabled:cursor-not-allowed disabled:opacity-60"
         >
           Зареєструватися
         </button>

@@ -42,7 +42,7 @@ export const registerFieldsSchema = z.object({
     })
     .min(8, { error: "Пароль має містити щонайменше 8 символів", abort: true })
     .max(64, "Пароль має містити не більше 64 символів"),
-  confirmPassword: requiredText("Введіть пароль ще раз"),
+  confirmPassword: z.string().min(1, "Введіть пароль ще раз"),
   acceptTerms: z.literal(true, {
     error: "Потрібна згода на обробку персональних даних",
   }),

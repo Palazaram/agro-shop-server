@@ -10,6 +10,7 @@ type MappedErrors = {
 const NETWORK_ERROR =
   "Не вдалося з'єднатися з сервером. Перевірте інтернет і спробуйте ще раз.";
 const UNKNOWN_ERROR = "Щось пішло не так. Спробуйте ще раз.";
+const SERVER_ERROR = "Сервер тимчасово недоступний. Спробуйте пізніше.";
 
 export function mapApiErrors(
   error: unknown,
@@ -34,7 +35,7 @@ export function mapApiErrors(
   }
 
   if (Object.keys(fieldErrors).length === 0 && formErrors.length === 0) {
-    formErrors.push(UNKNOWN_ERROR);
+    formErrors.push(error.status >= 500 ? SERVER_ERROR : UNKNOWN_ERROR);
   }
 
   return {
