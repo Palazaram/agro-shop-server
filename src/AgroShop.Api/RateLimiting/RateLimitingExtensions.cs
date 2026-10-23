@@ -44,7 +44,7 @@ internal static class RateLimitingExtensions
         var problemDetails = ApiProblemDetails.Create(
             StatusCodes.Status429TooManyRequests,
             "Too Many Requests",
-            new ApiError(null, "request.rate_limited", "Too many requests. Try again later."));
+            new ApiError(null, "request.rate_limited", "Забагато спроб. Спробуйте за хвилину"));
 
         problemDetails.Type = "https://tools.ietf.org/html/rfc6585#section-4";
 

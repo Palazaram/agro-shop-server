@@ -20,7 +20,7 @@ internal sealed class DuplicateKeyExceptionHandler(
         var problemDetails = ApiProblemDetails.Create(
             StatusCodes.Status409Conflict,
             "Conflict",
-            new ApiError(null, "resource.duplicate", "A record with the same unique value already exists."));
+            new ApiError(null, "resource.duplicate", "Такі дані вже використовуються"));
 
         httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
 

@@ -5,97 +5,97 @@ public static class DomainErrors
     public static class Users 
     {
         public static Error NameIsRequired()
-            => Error.Validation("user.name.required", "Name is required");
+            => Error.Validation("user.name.required", "Це поле є обов'язковим");
 
         public static Error NameTooShort(int minLength)
             => Error.Validation("user.name.min_length",
-                $"Name must be at least {minLength} characters long");
+                $"Має містити від {minLength} символів");
 
         public static Error NameTooLong(int maxLength)
             => Error.Validation("user.name.max_length",
-                $"Name must not exceed {maxLength} characters");
+                $"Може містити до {maxLength} символів");
 
         public static Error NameInvalidFormat()
             => Error.Validation("user.name.invalid_format",
-                "Name must contain only Ukrainian letters, apostrophes and hyphens");
+                "Використовуйте лише українські літери, апостроф, дефіс або пробіл між словами");
 
         public static Error EmailIsRequired()
             => Error.Validation("user.email.required", 
-                "Email is required");
+                "Введіть пошту");
 
         public static Error EmailTooLong(int maxLength)
             => Error.Validation("user.email.max_length",
-                $"Email must not exceed {maxLength} characters");
+                $"Адреса може містити до {maxLength} символів");
 
         public static Error EmailInvalidFormat()
             => Error.Validation("user.email.invalid_format", 
-                "Email has invalid format");
+                "Введіть пошту у форматі name@example.com");
 
         public static Error PhoneIsRequired()
             => Error.Validation("user.phone.required", 
-                "Phone number is required");
+                "Введіть номер телефону");
 
         public static Error PhoneInvalidLength(int length)
             => Error.Validation("user.phone.invalid_length",
-                $"Phone number must contain {length} digits after the country code");
+                $"Номер має містити {length} цифр після коду країни");
 
         public static Error PhoneInvalidFormat()
             => Error.Validation("user.phone.invalid_format", 
-                "Phone number has invalid format");
+                "Перевірте номер телефону, наприклад +380 67 123 45 67");
 
         public static Error PhoneUnknownOperatorCode()
             => Error.Validation("user.phone.unknown_operator_code",
-                "Phone number does not start with a known Ukrainian mobile code");
+                "Такого коду мобільного оператора немає. Перевірте номер");
 
         public static Error PasswordIsRequired()
-            => Error.Validation("user.password.required", "Password is required");
+            => Error.Validation("user.password.required", "Введіть пароль");
 
         public static Error PasswordTooShort(int minLength)
             => Error.Validation("user.password.min_length",
-                $"Password must be at least {minLength} characters long");
+                $"Пароль має містити від {minLength} символів");
 
         public static Error PasswordTooLong(int maxLength)
             => Error.Validation("user.password.max_length",
-                $"Password must not exceed {maxLength} characters");
+                $"Пароль може містити до {maxLength} символів");
 
         public static Error PasswordHasUnsupportedCharacters()
             => Error.Validation("user.password.unsupported_characters",
-                "Password may contain only Latin letters, digits and punctuation, without spaces");
+                "Пароль може містити лише латинські літери, цифри та символи, без пробілів");
 
         public static Error EmailAlreadyExists()
             => Error.Conflict("user.email.already_exists",
-                "User with this email address already exists");
+                "Обліковий запис з цією поштою вже існує");
 
         public static Error PhoneAlreadyExists()
             => Error.Conflict("user.phone.already_exists",
-                "User with this phone number already exists");
+                "Обліковий запис з цим номером уже існує. Увійдіть");
 
         public static Error PhoneNotRegistered()
             => Error.Unauthorized("user.phone.not_registered",
-                "User with this phone number is not registered");
+                "Обліковий запис з цим номером не знайдено");
 
         public static Error PasswordInvalid()
-            => Error.Unauthorized("user.password.invalid", "Invalid password");
+            => Error.Unauthorized("user.password.invalid", "Неправильний пароль");
 
         public static Error NotFound()
-            => Error.NotFound("user.not_found", "User not found");
+            => Error.NotFound("user.not_found", "Користувача не знайдено");
 
         public static Error TermsNotAccepted()
-            => Error.Validation("user.terms.not_accepted", "You must accept the personal data processing terms");
+            => Error.Validation("user.terms.not_accepted", "Потрібна згода на обробку персональних даних");
     }
 
     public static class RefreshTokens 
     {
         public static Error AlreadyReplaced()
             => Error.Unauthorized("refresh_token.already_replaced",
-                "Refresh token has already been replaced; possible token reuse");
+                "Сесію завершено з міркувань безпеки. Увійдіть знову");
 
         public static Error Invalid()
             => Error.Unauthorized("refresh_token.invalid",
-                "Refresh token is revoked or expired");
+                "Сесію не знайдено або вона закінчилася. Увійдіть знову");
 
         public static Error ConcurrentRotation()
             => Error.Conflict("refresh_token.concurrent_rotation",
-                "Refresh token was already rotated by a concurrent request");
+                "Сесію вже оновлено в іншій вкладці");
     }
 }

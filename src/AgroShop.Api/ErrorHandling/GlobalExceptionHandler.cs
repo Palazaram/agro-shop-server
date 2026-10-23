@@ -29,7 +29,7 @@ internal sealed class GlobalExceptionHandler(
         var problemDetails = ApiProblemDetails.Create(
             StatusCodes.Status500InternalServerError,
             "Server error",
-            new ApiError(null, "internal.server_error", "An unexpected error occurred."));
+            new ApiError(null, "internal.server_error", "Сталася помилка на сервері. Спробуйте пізніше"));
 
         problemDetails.Detail = environment.IsDevelopment() ? exception.Message : null;
 

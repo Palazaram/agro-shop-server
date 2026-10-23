@@ -22,7 +22,7 @@ internal sealed class BadRequestExceptionHandler(
         var problemDetails = ApiProblemDetails.Create(
             badRequest.StatusCode,
             ReasonPhrases.GetReasonPhrase(badRequest.StatusCode),
-            new ApiError(null, "request.invalid", "The request could not be read."));
+            new ApiError(null, "request.invalid", "Не вдалося прочитати запит"));
 
         problemDetails.Detail = environment.IsDevelopment()
             ? badRequest.InnerException?.Message ?? badRequest.Message
