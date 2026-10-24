@@ -16,4 +16,7 @@ internal sealed class RefreshTokenRepository(AppDbContext context) : IRefreshTok
 
     public void Add(RefreshToken refreshToken)
         => context.RefreshTokens.Add(refreshToken);
+
+    public Task<int> DeleteExpiredBeforeAsync(DateTimeOffset cutoff, CancellationToken ct)
+        => context.RefreshTokens.Where(t => t.ExpiresAt < cutoff).ExecuteDeleteAsync(ct);
 }

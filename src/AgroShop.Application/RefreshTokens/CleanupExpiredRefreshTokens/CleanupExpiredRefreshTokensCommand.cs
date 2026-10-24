@@ -1,0 +1,3 @@
+﻿namespace AgroShop.Application.RefreshTokens.CleanupExpiredRefreshTokens;
+
+public sealed record CleanupExpiredRefreshTokensCommand;
