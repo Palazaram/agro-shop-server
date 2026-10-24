@@ -7,6 +7,8 @@ type RequestOptions = {
 };
 
 const API_PREFIX = "/api";
+const REFRESH_LOCK_NAME = "agro-shop:auth-refresh";
+const REFRESH_TIMEOUT_MS = 10_000;
 
 let refreshInFlight: Promise<boolean> | null = null;
 
@@ -46,16 +48,25 @@ function send(
 }
 
 function refreshSession(): Promise<boolean> {
-  refreshInFlight ??= requestRefresh().finally(() => {
+  refreshInFlight ??= refreshAcrossTabs().finally(() => {
     refreshInFlight = null;
   });
 
   return refreshInFlight;
 }
 
+async function refreshAcrossTabs(): Promise<boolean> {
+  if (typeof navigator === "undefined" || !navigator.locks) {
+    return requestRefresh();
+  }
+
+  return await navigator.locks.request(REFRESH_LOCK_NAME, requestRefresh);
+}
+
 async function requestRefresh(): Promise<boolean> {
   const response = await fetch(`${API_PREFIX}/auth/refresh`, {
     method: "POST",
+    signal: AbortSignal.timeout(REFRESH_TIMEOUT_MS),
   });
 
   return response.ok || response.status === 409;

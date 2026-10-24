@@ -3,10 +3,11 @@ import { Field } from "@base-ui/react/field";
 
 export type TextFieldProps = Omit<
   Field.Control.Props,
-  "className" | "name" | "disabled"
+  "className" | "name" | "disabled" | "required"
 > & {
   name: string;
   label: string;
+  required?: boolean;
   validate?: Field.Root.Props["validate"];
   disabled?: boolean;
   leftIcon?: ReactNode;
@@ -29,6 +30,7 @@ const controlClasses =
 export function TextField({
   name,
   label,
+  required = false,
   validate,
   disabled,
   leftIcon,
@@ -45,13 +47,26 @@ export function TextField({
     >
       <Field.Label className="text-sm font-medium text-body">
         {label}
+        {required && <RequiredMark />}
       </Field.Label>
       <div className={boxClasses}>
         {leftIcon}
-        <Field.Control className={controlClasses} {...controlProps} />
+        <Field.Control
+          className={controlClasses}
+          aria-required={required || undefined}
+          {...controlProps}
+        />
         {rightIcon}
       </div>
       <Field.Error className="text-sm text-danger" />
     </Field.Root>
+  );
+}
+
+export function RequiredMark() {
+  return (
+    <span aria-hidden className="text-danger">
+      {" *"}
+    </span>
   );
 }

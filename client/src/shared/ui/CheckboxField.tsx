@@ -2,13 +2,15 @@ import type { ReactNode } from "react";
 import { Checkbox } from "@base-ui/react/checkbox";
 import { Field } from "@base-ui/react/field";
 import { Check } from "lucide-react";
+import { RequiredMark } from "./TextField";
 
 type CheckboxFieldProps = Omit<
   Checkbox.Root.Props,
-  "className" | "name" | "disabled"
+  "className" | "name" | "disabled" | "required"
 > & {
   name: string;
   label: ReactNode;
+  required?: boolean;
   validate?: Field.Root.Props["validate"];
   disabled?: boolean;
   className?: string;
@@ -26,6 +28,7 @@ const boxClasses =
 export function CheckboxField({
   name,
   label,
+  required = false,
   validate,
   disabled,
   className,
@@ -39,12 +42,19 @@ export function CheckboxField({
       className={`group flex flex-col gap-1.5 ${className ?? ""}`}
     >
       <Field.Label className={labelClasses}>
-        <Checkbox.Root className={boxClasses} {...checkboxProps}>
+        <Checkbox.Root
+          className={boxClasses}
+          aria-required={required || undefined}
+          {...checkboxProps}
+        >
           <Checkbox.Indicator className="flex text-white">
             <Check className="size-3.5" strokeWidth={3} />
           </Checkbox.Indicator>
         </Checkbox.Root>
-        <span>{label}</span>
+        <span>
+          {label}
+          {required && <RequiredMark />}
+        </span>
       </Field.Label>
       <Field.Error className="pl-7.5 text-sm text-danger" />
     </Field.Root>

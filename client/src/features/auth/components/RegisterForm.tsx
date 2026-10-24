@@ -97,6 +97,7 @@ export function RegisterForm({
         <TextField
           name="lastName"
           label="Прізвище"
+          required
           autoComplete="family-name"
           autoCapitalize="words"
           validate={fieldValidator(fields.lastName)}
@@ -104,6 +105,7 @@ export function RegisterForm({
         <TextField
           name="firstName"
           label="Ім'я"
+          required
           autoComplete="given-name"
           autoCapitalize="words"
           validate={fieldValidator(fields.firstName)}
@@ -111,6 +113,7 @@ export function RegisterForm({
         <TextField
           name="patronymic"
           label="По батькові"
+          required
           autoComplete="additional-name"
           autoCapitalize="words"
           validate={fieldValidator(fields.patronymic)}
@@ -121,11 +124,13 @@ export function RegisterForm({
         <PhoneField
           name="phone"
           label="Номер телефону"
+          required
           validate={fieldValidator(fields.phone)}
         />
         <TextField
           name="email"
           label="Пошта"
+          required
           inputMode="email"
           autoComplete="email"
           autoCapitalize="none"
@@ -140,12 +145,14 @@ export function RegisterForm({
         <PasswordField
           name="password"
           label="Пароль"
+          required
           autoComplete="new-password"
           validate={fieldValidator(fields.password)}
         />
         <PasswordField
           name="confirmPassword"
           label="Повторіть пароль"
+          required
           autoComplete="new-password"
           validate={validateConfirmPassword}
         />
@@ -166,6 +173,7 @@ export function RegisterForm({
             </Link>
           </>
         }
+        required
         validate={fieldValidator(fields.acceptTerms)}
       />
 

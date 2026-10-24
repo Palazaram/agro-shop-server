@@ -63,11 +63,13 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
       <PhoneField
         name="phone"
         label="Номер телефону"
+        required
         validate={fieldValidator(loginSchema.shape.phone)}
       />
       <PasswordField
         name="password"
         label="Пароль"
+        required
         autoComplete="current-password"
         validate={fieldValidator(loginSchema.shape.password)}
       />
