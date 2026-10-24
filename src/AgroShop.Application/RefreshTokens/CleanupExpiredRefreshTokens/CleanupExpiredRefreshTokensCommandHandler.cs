@@ -20,7 +20,11 @@ public sealed class CleanupExpiredRefreshTokensCommandHandler(
         var now = timeProvider.GetUtcNow();
         var cutoff = now.AddDays(-options.Value.RetentionDaysAfterExpiry);
         var deletedRows = await refreshTokenRepository.DeleteExpiredBeforeAsync(cutoff, ct);
-        logger.LogInformation("Deleted {DeletedRows} expired refresh tokens (expired before {Cutoff})", deletedRows, cutoff);
+
+        logger.LogInformation(
+            "Deleted {DeletedRows} expired refresh tokens (expired before {Cutoff:u})",
+            deletedRows, cutoff);
+
         return deletedRows;
     }
 }

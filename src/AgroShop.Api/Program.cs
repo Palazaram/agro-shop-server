@@ -5,8 +5,11 @@ using AgroShop.Api.OpenApi;
 using AgroShop.Api.RateLimiting;
 using AgroShop.Application;
 using AgroShop.Infrastructure;
+using AgroShop.Infrastructure.BackgroundJobs;
+using Hangfire;
 using Scalar.AspNetCore;
 using Serilog;
+using Serilog.Events;
 using System.Text.Json.Serialization;
 
 Log.Logger = new LoggerConfiguration()
@@ -54,7 +57,18 @@ try
 
     var app = builder.Build();
 
-    app.UseSerilogRequestLogging();
+    app.Services.ScheduleRecurringJobs();
+
+    app.UseSerilogRequestLogging(options =>
+    {
+        options.GetLevel = (httpContext, elapsed, exception) =>
+            exception is not null || httpContext.Response.StatusCode >= 500
+                ? LogEventLevel.Error
+                : httpContext.Request.Path.StartsWithSegments("/hangfire")
+                    ? LogEventLevel.Debug
+                    : LogEventLevel.Information;
+    });
+
     app.UseExceptionHandler();
     app.UseRateLimiter();
     app.UseAuthentication();
@@ -69,6 +83,7 @@ try
             .WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.Fetch)
             .SortTagsAlphabetically()
             .SortOperationsByMethod());
+        app.MapHangfireDashboard();
     }
 
     app.MapAuthEndpoints();

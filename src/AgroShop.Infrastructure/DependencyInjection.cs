@@ -11,6 +11,8 @@ using AgroShop.Infrastructure.Persistence.Repositories;
 using AgroShop.Infrastructure.Security;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Hangfire;
+using Hangfire.PostgreSql;
 
 namespace AgroShop.Infrastructure;
 
@@ -20,22 +22,23 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        string connectionString = configuration.GetConnectionString("Database")
+            ?? throw new InvalidOperationException("Connection string 'Database' is not configured.");
+
         services.AddValidatedOptions<JwtOptions>(JwtOptions.SectionName);
 
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddSingleton<IRefreshTokenGenerator, RefreshTokenGenerator>();
         services.AddSingleton<IJwtProvider, JwtProvider>();
 
-        AddPersistence(services, configuration);
+        AddPersistence(services, connectionString);
+        AddBackgroundJobs(services, connectionString);
 
         return services;
     }
 
-    private static void AddPersistence(IServiceCollection services, IConfiguration configuration)
+    private static void AddPersistence(IServiceCollection services, string connectionString)
     {
-        string connectionString = configuration.GetConnectionString("Database")
-            ?? throw new InvalidOperationException("Connection string 'Database' is not configured.");
-
         services.AddDbContext<AppDbContext>(options =>
             DbContextOptionsConfigurator.Configure(options, connectionString));
 
@@ -45,5 +48,16 @@ public static class DependencyInjection
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
         services.AddScoped<IUserQueries, UserQueries>();
+    }
+
+    private static void AddBackgroundJobs(IServiceCollection services, string connectionString)
+    {
+        services.AddHangfire(configuration => configuration
+            .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UsePostgreSqlStorage(options => options.UseNpgsqlConnection(connectionString)));
+
+        services.AddHangfireServer();
     }
 }
